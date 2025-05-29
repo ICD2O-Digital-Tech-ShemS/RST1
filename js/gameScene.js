@@ -10,7 +10,7 @@ class GameScene extends Phaser.Scene {
 
     // create an alien
     createAlien() {
-        const anAlien = this.physics.add.sprite(100, -100, 'alien')
+        const anAlien = this.physics.add.sprite(alienXLocation, -100, 'alien')
         this.alienGroup.add(anAlien)
     }
 
