@@ -30,8 +30,10 @@ class GameScene extends Phaser.Scene {
         this.scoreText = null
         this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         
-this.gameOverText = null
+        this.gameOverText = null
         this.gameOverTextStyle = { font: '65px Arial', fill: '#ff0000', align: 'center' }
+
+        this.isGameOver = false 
     }
   
   
@@ -109,7 +111,7 @@ this.gameOverText = null
         }
     
         if (keySpaceObj.isDown === true) {
-            if (this.fireMissile === false) {
+            if (this.fireMissile === false &&!this.isGameOver) {
                 this.fireMissile = true
                 const aNewMissile = this.physics.add.sprite(this.ship.x, this.ship.y, 'missile')
                 this.missileGroup.add(aNewMissile)
