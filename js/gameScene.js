@@ -10,7 +10,7 @@ class GameScene extends Phaser.Scene {
     
     // create an alien
     createAlien() {
-        alienXLocation *= Math.round(Math.random()) ? 1 : - 1
+        const alienXLocation = Math.floor(Math.random() * 1920) + 1
         const anAlien = this.physics.add.sprite(alienXLocation, -100, 'alien')
         let alienXVelocity = Math.floor(Math.random() * 50) + 1
         alienXVelocity *= Math.round(Math.random()) ? 1 : -1
@@ -21,19 +21,24 @@ class GameScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'gameScene' });
-        
+
+        this.background = null
         this.ship = null
         this.fireMissile = false
-        this.score = 0 
+        this.isGameOver = false
+        this.score = 0
         this.scoreText = null
-        this.scoreTextStyle = {font: '65px Arial', fill: '#ffffff', align: 'center'}
-        this.gameOverTextStyle = {font: '65px Arial', fill: '#ff0000', align: 'center'}
+        this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
+        
+this.gameOverText = null
+        this.gameOverTextStyle = { font: '65px Arial', fill: '#ff0000', align: 'center' }
     }
-
-    init (data) {
-        this.cameras.main.setBackgroundColor("#0x5f6e7a");
+  
+  
+    init(data) {
+        this.cameras.main.setBackgroundColor("AEA04B");
     }
-
+  
     preload() {
         console.log('Game Scene');
 
@@ -41,6 +46,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('ship', 'assets/spaceShip.png')
         this.load.image('missile', 'assets/missile.png')
         this.load.image('alien', 'assets/alien.png')
+        // sound
         this.load.audio('laser', 'assets/laser1.wav')
         this.load.audio('explosion', 'assets/barrelExploding.wav')
         this.load.audio('bomb', 'assets/bomb.wav')
@@ -54,41 +60,40 @@ class GameScene extends Phaser.Scene {
 
         this.ship = this.physics.add.sprite(1920 / 2, 1080 - 100, 'ship')
 
-        // create a group for the missiles
         this.missileGroup = this.physics.add.group()
 
-        // create a group for the alines
         this.alienGroup = this.add.group()
         this.createAlien()
 
-        // Collisions between missiles and alines
-        this.physics.add.collider(this.missileGroup, this.alienGroup, function (missileCollide, alienCollide) {
-            alienCollide.destroy();
-            missileCollide.destroy();
-            this.sound.play('explosion');
+        // overlap between missile and alien
+        this.physics.add.overlap(this.missileGroup, this.alienGroup, function (missileCollide, alienCollide) {
+            alienCollide.destroy()
+            missileCollide.destroy()
             this.score = this.score + 1
-            this.scoreText.setText('score: ' + this.score.toString())
-            this.createAlien();
-            this.createAlien();
-        }.bind(this));
+            this.scoreText.setText('Score: ' + this.score.toString())
+            this.sound.play('explosion')
+            this.createAlien()
+            this.createAlien()
+        }.bind(this))
 
         this.physics.add.collider(this.ship, this.alienGroup, function (shipCollide, alienCollide) {
             this.sound.play('bomb')
             this.physics.pause()
             alienCollide.destroy()
             shipCollide.destroy()
-            this.gameOverText = this.add.text(1920 / 2, 1080 / 2, 'Game Over!\nClick to play again.',
-            this.gameOverTextStyle).setOrigin(0.5),
+            this.gameOverText = this.add.text(1920 / 2, 1080 / 2, 'Game Over!\nClick to play again.', this.gameOverTextStyle).setOrigin(0.5)
             this.gameOverText.setInteractive({ useHandCursor: true })
-            this.gameOverText.on('pointerdown', () => this.scene.start('gameScene'));
-        }.bind(this));
+            this.gameOverText.on('pointerdown', () => this.scene.start('gameScene'))
+
+        }.bind(this))
     }
 
     update(time, delta) {
-
+        
         const keyLeftObj = this.input.keyboard.addKey('LEFT')
         const keyRightObj = this.input.keyboard.addKey('RIGHT')
         const keySpaceObj = this.input.keyboard.addKey('SPACE')
+
 
         if (keyLeftObj.isDown === true) {
             this.ship.x -= 15
