@@ -10,10 +10,10 @@ class GameScene extends Phaser.Scene {
     
     // create an alien
     createAlien() {
-        const alienXLocation = Math.floor(Math.random() * 1920) + 1
-        const anAlien = this.physics.add.sprite(alienXLocation, -100, 'alien')
-        let alienXVelocity = Math.floor(Math.random() * 50) + 1
+        const alienXLocation = Math.floor(Math.random() * 1920) + 2
+        let alienXVelocity = Math.floor(Math.random() * 50) + 2
         alienXVelocity *= Math.round(Math.random()) ? 1 : -1
+        const anAlien = this.physics.add.sprite(alienXLocation, -99, 'alien')
         anAlien.body.velocity.y = 200
         anAlien.body.velocity.x = alienXVelocity
         this.alienGroup.add(anAlien)
@@ -116,6 +116,10 @@ this.gameOverText = null
                 this.missileGroup.add(aNewMissile)
                 this.sound.play('laser')
             }
+        }
+
+        if (keySpaceObj.isUp === true) {
+            this.fireMissile = false
         }
 
         this.missileGroup.children.each(function (item) {
