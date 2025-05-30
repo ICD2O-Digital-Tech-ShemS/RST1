@@ -55,6 +55,9 @@ class GameScene extends Phaser.Scene {
     }
 
     create(data) {
+        this.fireMissile = false
+        this.isGameOver = false
+        this.score = 0
         this.background = this.add.image(0, 0, 'starBackground').setScale(2.0)
         this.background.setOrigin(0, 0)
         this.scoreText = this.add.text(10, 10, 'score: ' + this.score.toString(), this.scoreTextStyle)
@@ -62,8 +65,6 @@ class GameScene extends Phaser.Scene {
         this.missileGroup = this.physics.add.group()
         this.alienGroup = this.add.group()
         this.createAlien()
-
-        // overlap between missile and alien
         this.physics.add.overlap(this.missileGroup, this.alienGroup, function (missileCollide, alienCollide) {
             alienCollide.destroy()
             missileCollide.destroy()
@@ -73,7 +74,7 @@ class GameScene extends Phaser.Scene {
             this.createAlien()
             this.createAlien()
         }.bind(this))
-
+    
         this.physics.add.collider(this.ship, this.alienGroup, function (shipCollide, alienCollide) {
             this.sound.play('bomb')
             this.physics.pause()
@@ -83,9 +84,9 @@ class GameScene extends Phaser.Scene {
             this.gameOverText = this.add.text(1920 / 2, 1080 / 2, 'Game Over!\nClick to play again.', this.gameOverTextStyle).setOrigin(0.5)
             this.gameOverText.setInteractive({ useHandCursor: true })
             this.gameOverText.on('pointerdown', () => this.scene.start('gameScene'))
-
         }.bind(this))
     }
+    
 
     update(time, delta) {
         if (this.isGameOver) {
