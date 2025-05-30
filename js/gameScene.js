@@ -118,10 +118,14 @@ this.gameOverText = null
             }
         }
 
-        if (keySpaceObj.isUp === true) {
-            this.fireMissile = false
+        if (keySpaceObj.isDown === true) {
+            if (this.fireMissile === false) {
+                this.fireMissile = true
+                const aNewMissile = this.physics.add.sprite(this.ship.x, this.ship.y, 'missile')
+                this.missileGroup.add(aNewMissile)
+                this.sound.play('laser')
+            }
         }
-
         this.missileGroup.children.each(function (item) {
             item.y = item.y - 15
             if (item.y < 0) {
